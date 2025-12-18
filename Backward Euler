@@ -1,0 +1,25 @@
+import numpy as np
+
+def backward_euler(f, df, t0, y0, h, N):
+    t = np.zeros(N+1)
+    y = np.zeros(N+1)
+
+    t[0] = t0
+    y[0] = y0
+
+    for n in range(N):
+        t[n+1] = t[n] + h
+        y_new = y[n]
+
+        for _ in range(10):  # Newton iteration
+            y_new -= (y_new - y[n] - h*f(t[n+1], y_new)) / (1 - h*df(t[n+1], y_new))
+
+        y[n+1] = y_new
+
+    return t, y
+
+
+if __name__ == "__main__":
+    f  = lambda t, y: -y
+    df = lambda t, y: -1
+    t, y = backward_euler(f, df, 0.0, 1.0, 0.1, 50)
